@@ -1,6 +1,5 @@
 FROM alpine:3.4
 
-# persistent / runtime deps
 ENV PHPIZE_DEPS \
 		autoconf \
 		file \
