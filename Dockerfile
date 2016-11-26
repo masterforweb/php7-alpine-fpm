@@ -156,7 +156,15 @@ RUN set -ex \
 		echo; \
 		echo '[www]'; \
 		echo 'listen = [::]:9000'; \
-	} | tee php-fpm.d/zz-docker.conf
+	} | tee php-fpm.d/zz-docker.conf \
+
+
+	&&  docker-php-ext-install mysqli \
+		&& docker-php-ext-install opcache \
+		&& apk add --no-cache imagemagick-dev libtool autoconf gcc g++ make \
+		&& pecl install imagick-$IMAGICK_VERSION \
+		&& echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini \
+    	&& apk del libtool autoconf gcc g++ make
 
 EXPOSE 9000
 CMD ["php-fpm"]
