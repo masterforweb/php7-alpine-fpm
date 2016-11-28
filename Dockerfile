@@ -165,6 +165,7 @@ RUN set -ex \
 	RUN docker-php-ext-install mysqli \
 		&& docker-php-ext-install opcache \
 		&& apk add --no-cache imagemagick-dev libtool autoconf gcc g++ make \
+		&& apk add --no-cache php7-memcached \
 		&& pecl install imagick-$IMAGICK_VERSION \
 		&& echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini \
     	&& apk del libtool autoconf gcc g++ make
