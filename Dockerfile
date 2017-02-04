@@ -168,7 +168,13 @@ RUN set -ex \
 		&& apk add --no-cache php7-memcached \
 		&& pecl install imagick-$IMAGICK_VERSION \
 		&& echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini \
-    	&& apk del libtool autoconf gcc g++ make
+    	&& apk del libtool autoconf gcc g++ make \
+    	&& php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
+    	&& php composer-setup.php --install-dir=/usr/bin --filename=composer \
+    	&& php -r "unlink('composer-setup.php');" \
+    	&& composer require "phpunit/phpunit:~5.7.5" --prefer-source --no-interaction \
+    	&& composer require "phpunit/php-invoker" --prefer-source --no-interaction \
+		&& ln -s /tmp/vendor/bin/phpunit /usr/local/bin/phpunit
 
 EXPOSE 9000
 CMD ["php-fpm"]
