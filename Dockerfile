@@ -7,6 +7,7 @@ RUN set -x \
 	&& apk add --no-cache git \
 	&& apk add --no-cache imagemagick-dev libtool autoconf gcc g++ make \
 	&& pecl install imagick-$IMAGICK_VERSION \
+	&& pecl install amqp \
  	&& echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini \
 	&& apk add --update libjpeg-turbo-dev libpng-dev freetype-dev \
 	&& docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
