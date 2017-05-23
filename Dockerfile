@@ -7,7 +7,7 @@ RUN set -x \
 	&& deluser www-data \	
 	&& apk add --no-cache git \
 
-	&& apk add --no-cache imagemagick-dev libtool autoconf gcc g++ make \
+	&& apk add --no-cache pcre-dev imagemagick-dev libtool autoconf gcc g++ make \
     && pecl install imagick-$IMAGICK_VERSION \
     && echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini \
     && apk del libtool autoconf gcc g++ make \
