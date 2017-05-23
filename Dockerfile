@@ -7,11 +7,10 @@ RUN set -x \
 	&& apk add --no-cache git \
 	&& apk add --no-cache imagemagick-dev libtool autoconf gcc g++ make \
 	&& pecl install imagick-$IMAGICK_VERSION \
-	&& echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini \
+ 	&& echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini \
 	&& apk add --update libjpeg-turbo-dev libpng-dev freetype-dev \
 	&& docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
 	&& docker-php-ext-install opcache gd mysqli pdo pdo_mysql \
-	&& pecl install amqp \
 	&& php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php composer-setup.php --install-dir=/usr/bin --filename=composer \
     && php -r "unlink('composer-setup.php');" \
