@@ -1,18 +1,27 @@
 FROM php:7.1-fpm-alpine
 
-ENV IMAGICK_VERSION 3.4.3
+ENV IMAGICK_VERSION 3.4.2
 
 RUN set -x \
-	
 	&& deluser www-data \	
 	&& apk add --no-cache git \
-
-	&& apk add --no-cache pcre-dev imagemagick-dev libtool autoconf gcc g++ make \
-    && pecl install imagick-$IMAGICK_VERSION \
-    && echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini \
-    && apk del libtool autoconf gcc g++ make \
-
+	&& apk add --update libjpeg-turbo-dev libpng-dev freetype-dev\
 	&& docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+	
+	&& apk add --no-cache --virtual .imagick-build-dependencies autoconf curl g++ gcc imagemagick-dev libtool make tar \
+	&& apk add --virtual .imagick-runtime-dependencies imagemagick \
+  	&& IMAGICK_TAG="3.4.2" \
+	&& git clone -o ${IMAGICK_TAG} --depth 1 https://github.com/mkoppanen/imagick.git /tmp/imagick \
+	&& cd /tmp/imagick \
+	&& phpize \
+	&& ./configure \
+	&& make \
+	&& make install \
+
+	&& echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini \
+
+	&& apk del .imagick-build-dependencies \
+
 	&& docker-php-ext-install opcache gd mysqli pdo pdo_mysql \
 	&& php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php composer-setup.php --install-dir=/usr/bin --filename=composer \
@@ -20,7 +29,10 @@ RUN set -x \
     && composer require "phpunit/phpunit" --prefer-source --no-interaction \
     && ln -s /tmp/vendor/bin/phpunit /usr/local/bin/phpunit \
 	&& apk del libtool autoconf gcc g++ make \
+	
+
 	&& addgroup -g 1000 -S www-data \
 	&& adduser -u 1000 -D -S -G www-data www-data
 
-USER www-data
+	WORKDIR /vhosts
+	USER www-data
